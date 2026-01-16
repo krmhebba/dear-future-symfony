@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lettre du Futur{% endblock %}
+
+{% block body %}
+    <style>
+        .secret-blur {
+            color: transparent;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+            user-select: none;
+        }
+
+        .btn-custom {
+            background-color: #7c2a2d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #5a1e20;
+            color: white;
+        }
+
+        /* --- SYSTÈME DE ZOOM & FLOU --- */
+        .gift-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #fafafa;
+            border: 2px dashed #e8ccb5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 40px;
+            transition: filter 0.3s ease;
+        }
+
+        .gift-image-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .gift-zoom-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: zoom-in;
+        }
+
+        .gift-image-container:hover .gift-zoom-image {
+            transform: scale(2.5);
+            z-index: 999;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-color: white;
+        }
+
+        /* Tooltip description au survol */
+        .gift-tooltip {
+            display: none;
+            position: absolute;
+            top: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background: #7c2a2d;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .gift-tooltip::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent #7c2a2d transparent;
+        }
+
+        .gift-image-container:hover .gift-tooltip {
+            display: block;
+        }
+
+        /* Flou du contenu de la carte lors du zoom */
+        .gift-wrapper:has(.gift-image-container:hover) > div:not(.gift-image-container) {
+            filter: blur(2px);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+    </style>
+
+    <div class="card" style="max-width: 800px; margin: 40px auto; padding: 40px; position: relative; background: #fffcf5;">
+
+        <div style="border-bottom: 2px solid #f0e6d2; padding-bottom: 20px; margin-bottom: 30px; text-align: center;">
+            <span style="background: #7c2a2d; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                {% if letter.sendDate > date() %}
+                    <i class="fas fa-hourglass-half"></i> À ouvrir plus tard
+                {% else %}
+                    <i class="fas fa-envelope-open"></i> Lettre Reçue
+                {% endif %}
+            </span>
+            <h1 style="color: #7c2a2d; font-size: 2.5rem; margin-top: 15px; font-family: 'Playfair Display', serif;">
+                {{ letter.title }}
+            </h1>
+            <p style="color: #888; font-style: italic;">
+                Pour le {{ letter.sendDate|date('d/m/Y') }}
+            </p>
+        </div>
+
+        {% if letter.sendDate > date() %}
+            <div style="margin-bottom: 40px; background: #fdf5e7; border: 2px dashed #7c2a2d; padding: 30px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 15px; color: #7c2a2d;">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 style="color: #5a1e20; margin-bottom: 10px;">Chut... C'est une surprise !</h2>
+                <p style="color: #666; font-size: 1.1rem;">
+                    Cette lettre est scellée jusqu'au <strong>{{ letter.sendDate|date('d/m/Y') }}</strong>.
+                    <br>Reviens ce jour-là pour découvrir le message.
+                </p>
+                <div style="background: white; padding: 20px; border-radius: 5px; margin-top: 20px; border: 1px solid #eee; text-align: left;">
+                    <p class="secret-blur">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                </div>
+            </div>
+        {% else %}
+            <div style="font-size: 1.2rem; line-height: 1.8; color: #333; white-space: pre-wrap; margin-bottom: 40px; font-family: 'Georgia', serif;">
+                {{ letter.content }}
+            </div>
+        {% endif %}
+
+        {% if letter.product %}
+            <div class="gift-wrapper">
+                <div class="gift-image-container">
+                    {% if letter.product.image %}
+                        <img src="{{ asset('uploads/products/' ~ letter.product.image) }}" alt="{{ letter.product.name }}" class="gift-zoom-image">
+                    {% else %}
+                        <div class="gift-zoom-image" style="display: flex; align-items: center; justify-content: center; background: #eee; font-size: 3rem;">🎁</div>
+                    {% endif %}
+                    
+                    <div class="gift-tooltip">
+                        <strong style="display:block; border-bottom:1px solid rgba(255,255,255,0.2); margin-bottom:8px;">
+                            <i class="fas fa-info-circle"></i> {{ letter.product.name }}
+                        </strong>
+                        {{ letter.product.description|default('Aucune description disponible.') }}
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="margin: 0; color: #7c2a2d;">Cadeau associé : {{ letter.product.name }}</h3>
+                    <p style="margin: 5px 0 0 0; color: #555;">Survolez l'image pour l'agrandir et voir les détails.</p>
+                </div>
+            </div>
+
+            {% if letter.sendDate <= date() and letter.deliveryAddress %}
+                <div style="margin-top: 20px; padding: 20px; background: white; border: 1px solid #eee; border-radius: 10px;">
+                    <h4 style="color: #5a1e20; margin-top: 0;">
+                        <i class="fas fa-truck"></i> Infos de livraison enregistrées
+                    </h4>
+                    <p style="margin: 0; color: #555;">
+                        <strong>Adresse :</strong> {{ letter.deliveryAddress }}<br>
+                        <strong>Ville :</strong> {{ letter.city }}<br>
+                        <strong>Tél :</strong> {{ letter.phoneNumber }}
+                    </p>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 50px; display: flex; justify-content: center; gap: 15px;">
+            <a href="{{ path('app_letter_index') }}" class="btn-custom">
+                <i class="fas fa-arrow-left"></i> Retour aux archives
+            </a>
+            {% if letter.sendDate > date() %}
+                <a href="{{ path('app_letter_edit', {'id': letter.id}) }}" class="btn-custom">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>y
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

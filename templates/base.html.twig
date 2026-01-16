@@ -1,17 +1,80 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+		<link rel="icon" href="{{ asset('images/logo.png') }}?v=3">
+		<title>
+			{% block title %}Dear Future
+			{% endblock %}
+		</title>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+		<style>
+			.nav-links a.active {
+				color: var(--primary);
+				border-bottom: 2px solid var(--primary);
+				padding-bottom: 5px;
+			}
+
+			.brand i {
+				margin-right: 8px;
+				color: var(--primary);
+			}
+		</style>
+	</head>
+	<body>
+		<nav class="navbar">
+			<a href="{{ path('app_home') }}" class="brand">
+				<i class="fas fa-feather-alt"></i>
+				Dear Future
+			</a>
+
+			<div class="nav-links">
+				{% if app.user %}
+					<a href="{{ path('app_letter_index') }}" class="{{ app.request.get('_route') == 'app_letter_index' ? 'active' : '' }}">
+						<i class="far fa-envelope"></i>
+						Mes Lettres
+					</a>
+					<a href="{{ path('app_letter_new') }}" class="{{ app.request.get('_route') == 'app_letter_new' ? 'active' : '' }}">
+						<i class="fas fa-plus"></i>
+						Écrire
+					</a>
+
+					{% if is_granted('ROLE_ADMIN') %}
+						<a href="{{ path('admin') }}" target="_blank" title="Accéder à l'administration">
+							<i class="fas fa-user-shield"></i>
+						</a>
+					{% endif %}
+
+					<a href="{{ path('app_logout') }}" style="color: var(--primary);">
+						<i class="fas fa-sign-out-alt"></i>
+					</a>
+				{% else %}
+					<a href="{{ path('app_login') }}" class="{{ app.request.get('_route') == 'app_login' ? 'active' : '' }}">
+						Connexion
+					</a>
+					<a href="{{ path('app_register') }}" class="{{ app.request.get('_route') == 'app_register' ? 'active' : '' }}" style="margin-left: 15px;">
+						Inscription
+					</a>
+				{% endif %}
+			</div>
+		</nav>
+
+		<div class="container">
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+					<script>
+						Swal.fire({icon: '{{ label == "success" ? "success" : "error" }}', title: '{{ label == "success" ? "Succès" : "Notification" }}', text: '{{ message|e("js") }}', confirmButtonColor: '#7c2a2d'});
+					</script>
+				{% endfor %}
+			{% endfor %}
+
+			{% block body %}{% endblock %}
+		</div>
+	</body>
 </html>

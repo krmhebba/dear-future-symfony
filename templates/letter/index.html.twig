@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Lettres
+{% endblock %}
+
+{% block body %}
+	<style>
+		.btn-dear-future {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			padding: 8px 16px;
+			font-size: 0.9rem;
+			text-decoration: none;
+			border-radius: 5px;
+			transition: all 0.2s ease-in-out;
+			cursor: pointer;
+			border: 1px solid #7c2a2d;
+			background-color: #7c2a2d;
+			color: white;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		.btn-dear-future:hover {
+			background-color: #5a1e20;
+			border-color: #5a1e20;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+			color: white;
+		}
+	</style>
+
+	<div class="card" style="max-width: 1000px; margin: 40px auto; border: none; box-shadow: 0 0 15px rgba(0,0,0,0.05);">
+		<div class="card-header" style="background-color: white; border-bottom: 2px solid #f0f0f0; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+			<h1 style="color: #7c2a2d; margin: 0; font-size: 1.8rem;">
+				<i class="fas fa-history"></i>
+				Mes Archives
+			</h1>
+			<a href="{{ path('app_letter_new') }}" class="btn-dear-future">
+				<i class="fas fa-plus"></i>
+				Nouvelle lettre
+			</a>
+		</div>
+
+		<div class="card-body" style="padding: 0;">
+			<table class="table" style="margin-bottom: 0;">
+				<thead style="background-color: #fdf5e7;">
+					<tr>
+						<th style="padding: 15px; color: #5a1e20;">Titre</th>
+						<th style="padding: 15px; color: #5a1e20;">Cadeau</th>
+						<th style="padding: 15px; color: #5a1e20;">Statut</th>
+						<th style="padding: 15px; color: #5a1e20;">Date d'ouverture</th>
+						<th style="padding: 15px; text-align: right; color: #5a1e20;">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for letter in letters %}
+						<tr style="border-bottom: 1px solid #f0f0f0;">
+							<td style="padding: 15px; font-weight: bold; color: #7c2a2d; vertical-align: middle;">
+								{{ letter.title }}
+							</td>
+
+							<td style="padding: 15px; vertical-align: middle;">
+								{% if letter.product %}
+									<div style="display: flex; align-items: center; gap: 10px;">
+										{% if letter.product.image %}
+											<img src="{{ asset('uploads/products/' ~ letter.product.image) }}" alt="{{ letter.product.name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
+										{% else %}
+											<span style="font-size: 1.5rem;">🎁</span>
+										{% endif %}
+										<span style="color: #555; font-size: 0.9rem;">{{ letter.product.name }}</span>
+									</div>
+								{% else %}
+									<span style="color: #aaa; font-style: italic; font-size: 0.8rem;">Aucun</span>
+								{% endif %}
+							</td>
+
+							<td style="padding: 15px; vertical-align: middle;">
+								{% if letter.sendDate > date() %}
+									<span style="background: #fef3c7; color: #d97706; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
+										<i class="fas fa-lock"></i>
+										Verrouillé
+									</span>
+								{% else %}
+									<span style="background: #dcfce7; color: #166534; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
+										<i class="fas fa-lock-open"></i>
+										Déverrouillé
+									</span>
+								{% endif %}
+							</td>
+
+							<td style="padding: 15px; vertical-align: middle; color: #555;">
+								{{ letter.sendDate ? letter.sendDate|date('d/m/Y') : '' }}
+							</td>
+
+							<td style="padding: 15px; text-align: right; vertical-align: middle;">
+								<div style="display: flex; gap: 8px; justify-content: flex-end;">
+									<a href="{{ path('app_letter_show', {'id': letter.id}) }}" class="btn-dear-future">
+										<i class="fas fa-eye"></i>
+									</a>
+									<a href="{{ path('app_letter_edit', {'id': letter.id}) }}" class="btn-dear-future">
+										<i class="fas fa-pen"></i>
+									</a>
+								</div>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="5" style="text-align: center; padding: 4rem; color: #999;">
+								<i class="far fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+								Votre capsule temporelle est vide.
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Dear Future
+{% endblock %}
+
+{% block body %}
+	<div class="hero">
+		<h1>Écrivez à votre futur.</h1>
+		<p>
+			Une capsule temporelle numérique pour vos souvenirs, vos espoirs et vos rêves.
+						        Rédigez aujourd'hui, redécouvrez demain.
+		</p>
+
+		<div style="display: flex; gap: 15px; justify-content: center;">
+			{% if app.user %}
+				<a href="{{ path('app_letter_new') }}" class="btn">
+					<i class="fas fa-pen-fancy"></i>
+					Rédiger une lettre
+				</a>
+			{% else %}
+				<a href="{{ path('app_register') }}" class="btn">
+					<i class="fas fa-user-plus"></i>
+					Commencer l'aventure
+				</a>
+				<a href="{{ path('app_login') }}" class="btn btn-outline">
+					<i class="fas fa-sign-in-alt"></i>
+					Se connecter
+				</a>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="features-grid">
+		<div class="feature-item">
+			<i class="far fa-calendar-alt"></i>
+			<h3>Date Précise</h3>
+			<p>Choisissez exactement quand votre lettre sera délivrée. Dans 6 mois, 1 an ou 10 ans.</p>
+		</div>
+
+		<div class="feature-item">
+			<i class="fas fa-shield-alt"></i>
+			<h3>Privé & Sécurisé</h3>
+			<p>Vos écrits sont personnels. Ils restent cryptés et invisibles jusqu'au jour J.</p>
+		</div>
+
+		<div class="feature-item">
+			<i class="fas fa-history"></i>
+			<h3>Héritage Personnel</h3>
+			<p>Laissez une trace de vos pensées actuelles pour la personne que vous deviendrez.</p>
+		</div>
+	</div>
+{% endblock %}

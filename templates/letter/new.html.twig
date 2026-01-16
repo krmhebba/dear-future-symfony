@@ -1,0 +1,252 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Lettre{% endblock %}
+
+{% block body %}
+    <style>
+        /* --- SYSTÈME DE ZOOM, FLOU ET GESTION DES BORDS --- */
+        
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px;
+            padding: 50px 30px; 
+        }
+
+        .gift-grid:hover > div:not(:hover) {
+            filter: blur(4px);
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .gift-card {
+            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 10px;
+            background: white;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .gift-card:hover {
+            border-color: #7c2a2d;
+            z-index: 999;
+        }
+
+        .gift-card:hover .gift-image {
+            transform: scale(3); 
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 2px solid white;
+        }
+
+        /* GESTION DES BORDS */
+        .gift-grid > div:nth-child(3n+1) .gift-image { transform-origin: left center; }
+        .gift-grid > div:nth-child(3n+2) .gift-image { transform-origin: center center; }
+        .gift-grid > div:nth-child(3n+3) .gift-image { transform-origin: right center; }
+
+        .gift-image {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .gift-info-tooltip {
+            display: none;
+            position: absolute;
+            top: 110%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            background: #7c2a2d;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            z-index: 1100;
+            pointer-events: none;
+        }
+
+        .gift-info-tooltip::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent #7c2a2d transparent;
+        }
+
+        label:hover .gift-info-tooltip {
+            display: block;
+            animation: fadeInTooltip 0.3s ease;
+        }
+
+        @keyframes fadeInTooltip {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        .gift-placeholder {
+            font-size: 2.5rem;
+            color: #ccc;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+    </style>
+
+    <div class="card" style="max-width: 700px; margin: 0 auto;">
+        <div class="card-header">
+            <h1><i class="fas fa-pen-fancy"></i> Écrire une nouvelle lettre</h1>
+        </div>
+
+        <div class="card-body">
+            {{ form_start(form) }}
+            
+            <div style="margin-bottom: 20px;">
+                <label><i class="fas fa-tag"></i> Titre de la lettre</label>
+                {{ form_widget(form.title, {'attr': {'placeholder': 'Ex : Mes rêves pour 2030...', 'style': 'font-size: 1.1rem;'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label><i class="fas fa-feather"></i> Cher futur moi...</label>
+                {{ form_widget(form.content, {'attr': {'rows': 8, 'placeholder': 'Raconte-toi tout...', 'style': 'font-family: inherit;'}}) }}
+                {{ form_errors(form.content) }}
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label><i class="far fa-calendar-alt"></i> Ouvrir le :</label>
+                {{ form_widget(form.sendDate) }}
+                <small style="color: var(--secondary);">La lettre restera secrète jusqu'à cette date.</small>
+                {{ form_errors(form.sendDate) }}
+            </div>
+
+            <div style="margin-bottom: 30px; background: #fafafa; padding: 15px; border-radius: 10px; border: 1px dashed #ddd;">
+                <label style="color: #7c2a2d; margin-bottom: 10px; display: block;">
+                    <i class="fas fa-gift"></i> Ajouter un petit cadeau (Optionnel)
+                </label>
+
+                <div class="gift-grid gift-container">
+                    {% for child in form.product %}
+                        <div style="position: relative;">
+                            {{ form_widget(child) }}
+                            <label for="{{ child.vars.id }}" style="cursor: pointer; margin: 0; position: relative;">
+                                
+                                {% if form.product.vars.choices[loop.index0] is defined %}
+                                    {% set product = form.product.vars.choices[loop.index0].data %}
+                                    
+                                    <div class="gift-info-tooltip">
+                                        <strong style="display:block; margin-bottom:5px; border-bottom:1px solid rgba(255,255,255,0.2);">
+                                            <i class="fas fa-info-circle"></i> Détails
+                                        </strong>
+                                        {{ product.description|default('Aucune description disponible.') }}
+                                    </div>
+
+                                    <div class="gift-card">
+                                        {% if product.image %}
+                                            <img src="{{ asset('uploads/products/' ~ product.image) }}" alt="{{ product.name }}" class="gift-image">
+                                        {% else %}
+                                            <div class="gift-placeholder"><i class="fas fa-gift"></i></div>
+                                        {% endif %}
+                                        <span class="gift-name">{{ product.name }}</span>
+                                        <span class="gift-price">{{ product.price }} MAD</span>
+                                    </div>
+                                {% else %}
+                                    <div class="gift-card" style="border: 2px dashed #ccc; background: #fafafa; opacity: 0.7;">
+                                        <div class="gift-placeholder" style="font-size: 2rem; color: #ccc;"><i class="fas fa-ban"></i></div>
+                                        <span class="gift-name" style="color: #888;">Pas de cadeau</span>
+                                    </div>
+                                {% endif %}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.product) }}
+            </div>
+
+            {% if form.deliveryAddress is defined %}
+                <div id="delivery-section" style="margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #eee; display: none;">
+                    <h3 style="color: #5a1e20; font-size: 1.2rem; margin-bottom: 15px; border-bottom: 2px solid #fdf5e7; padding-bottom: 10px;">
+                        <i class="fas fa-truck"></i> Où doit-on livrer le cadeau ?
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="grid-column: span 2;">
+                            <label style="font-weight: bold; color: #555;">Adresse complète</label>
+                            {{ form_widget(form.deliveryAddress, {'attr': {'placeholder': 'Ex : 12 Rue des Fleurs...', 'class': 'form-control', 'rows': 2, 'style': 'width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;'}}) }}
+                        </div>
+                        <div>
+                            <label style="font-weight: bold; color: #555;">Ville</label>
+                            {{ form_widget(form.city, {'attr': {'placeholder': 'Ex : Casablanca', 'class': 'form-control', 'style': 'width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;'}}) }}
+                        </div>
+                        <div>
+                            <label style="font-weight: bold; color: #555;">Téléphone</label>
+                            {{ form_widget(form.phoneNumber, {'attr': {'placeholder': 'Ex : 0773656406', 'class': 'form-control', 'style': 'width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;'}}) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn" style="border: none; cursor: pointer; background-color: #7c2a2d; color: white; padding: 10px 20px; border-radius: 5px;">
+                    <i class="fas fa-paper-plane"></i> Envoyer vers le futur
+                </button>
+                <a href="{{ path('app_letter_index') }}" class="btn" style="background-color: #6c757d; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deliverySection = document.getElementById('delivery-section');
+            const productInputs = document.querySelectorAll('.gift-container input[type="radio"]');
+
+            function toggleDelivery() {
+                let showAddress = false;
+                productInputs.forEach(function (input) {
+                    if (input.checked && input.value !== "") {
+                        showAddress = true;
+                    }
+                });
+                if (deliverySection) {
+                    deliverySection.style.display = showAddress ? 'block' : 'none';
+                }
+            }
+
+            productInputs.forEach(function (input) {
+                input.addEventListener('change', toggleDelivery);
+            });
+
+            toggleDelivery();
+
+            {% if not form.vars.valid %}
+                let errorMessage = "Veuillez vérifier les champs.";
+                {% if form.deliveryAddress is defined and form.deliveryAddress.vars.errors|length > 0 %}
+                    errorMessage = "Vous avez choisi un cadeau : l'adresse est obligatoire !";
+                {% endif %}
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({icon: 'error', title: 'Oups !', text: errorMessage, confirmButtonColor: '#7c2a2d'});
+                } else {
+                    alert(errorMessage);
+                }
+            {% endif %}
+        });
+    </script>
+{% endblock %}

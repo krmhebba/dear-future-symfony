@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Dear Future
+{% endblock %}
+
+{% block body %}
+	<div class="card" style="max-width: 500px; margin: 40px auto; padding: 40px;">
+		<h1 style="text-align: center; margin-bottom: 30px; font-family: 'Playfair Display', serif;">Inscription</h1>
+
+		{% if form_errors(registrationForm) or form_errors(registrationForm.email) %}
+			<div style="background-color: #fef2f2; border: 1px solid #ef4444; color: #991b1b; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+				<i class="fas fa-exclamation-triangle"></i>
+				Attention :
+				<div style="font-weight: bold;">{{ form_errors(registrationForm.email) }}</div>
+				<div>{{ form_errors(registrationForm) }}</div>
+			</div>
+		{% endif %}
+
+		{{ form_start(registrationForm) }}
+
+		<div style="margin-bottom: 20px;">
+			<label>Adresse Email</label>
+			{{ form_widget(registrationForm.email, {'attr': {'placeholder': 'votre@email.com'}}) }}
+		</div>
+
+		<div style="margin-bottom: 20px;">
+			<label>Mot de passe</label>
+			{{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'Choisissez un mot de passe sécurisé'}}) }}
+			<div style="color: #991b1b; font-size: 0.9rem;">
+				{{ form_errors(registrationForm.plainPassword) }}
+			</div>
+		</div>
+
+		<div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+			{{ form_widget(registrationForm.agreeTerms, {'attr': {'style': 'width: auto; margin: 0;'}}) }}
+			<label for="{{ registrationForm.agreeTerms.vars.id }}" style="margin: 0; cursor: pointer; font-weight: normal;">
+				J'accepte les conditions d'utilisation
+			</label>
+		</div>
+
+		<button type="submit" class="btn" style="width: 100%; justify-content: center; font-size: 1.1rem;">
+			Créer mon compte
+		</button>
+
+		<p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
+			Déjà inscrit ?
+			<a href="{{ path('app_login') }}" style="color: var(--primary); font-weight: bold;">Se connecter</a>
+		</p>
+
+		{{ form_end(registrationForm) }}
+	</div>
+{% endblock %}

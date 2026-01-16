@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('app_letter_delete', {'id': letter.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette lettre ?');" style="display: inline-block;">
+	<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ letter.id) }}">
+	<button class="btn" style="background-color: #991b1b; color: white;">
+		<i class="fas fa-trash-alt"></i>
+		Supprimer
+	</button>
+</form>

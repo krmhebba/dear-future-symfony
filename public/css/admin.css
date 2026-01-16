@@ -1,0 +1,147 @@
+:root {
+    --bs-primary: #7c2a2d;
+    --bs-primary-rgb: 124, 42, 45;
+    --ea-primary-500: #7c2a2d;
+
+    --ea-color-primary: #7c2a2d;
+    --ea-color-primary-hover: #5a1e20;
+    --ea-color-primary-active: #5a1e20;
+
+    --ea-sidebar-bg: #fdf5e7;
+    --ea-sidebar-color: #000000;
+}
+
+
+.sidebar {
+    background-color: #fdf5e7 !important;
+}
+
+
+.sidebar .menu-item a {
+    color: #000000 !important;
+    background: transparent !important;
+}
+
+
+.sidebar .menu-item i {
+    color: #000000 !important;
+}
+
+
+.sidebar .menu-item.active,
+.sidebar .menu-item.active a,
+.sidebar .menu-item.active i {
+    background: #fdf5e7 !important;
+    color: #7c2a2d !important;
+    font-weight: bold;
+}
+
+.sidebar .menu-item a:hover {
+    background: #f7ecd5 !important;
+    color: #7c2a2d !important;
+}
+
+.sidebar .menu-item a:hover i {
+    color: #7c2a2d !important;
+}
+
+
+body .btn-primary,
+body .action-new,
+body .action-save,
+body button.action-save {
+    --bs-btn-bg: #7c2a2d !important;
+    --bs-btn-border-color: #7c2a2d !important;
+    --bs-btn-hover-bg: #5a1e20 !important;
+    --bs-btn-hover-border-color: #5a1e20 !important;
+    --bs-btn-active-bg: #5a1e20 !important;
+
+    background-color: #7c2a2d !important;
+    border-color: #7c2a2d !important;
+    color: #ffffff !important;
+}
+
+
+h1,
+h2,
+h3,
+.content-header-title {
+    color: #7c2a2d !important;
+}
+
+.table thead th,
+.table thead th a,
+.table thead th span {
+    color: #7c2a2d !important;
+    border-bottom-color: #7c2a2d !important;
+}
+
+.table thead th.sorted {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-bottom: 3px solid #7c2a2d !important;
+}
+
+.table thead th.sorted a,
+.table thead th.sorted span {
+    color: #7c2a2d !important;
+}
+
+
+input[type="checkbox"]:checked {
+    background-color: #7c2a2d !important;
+    border-color: #7c2a2d !important;
+}
+
+a.action-save,
+a.action-new,
+button.action-save {
+    background: #7c2a2d !important;
+}
+
+a.action-save:hover,
+a.action-new:hover,
+button.action-save:hover {
+    background: #5a1e20 !important;
+}
+
+.btn,
+.btn:focus,
+.btn:hover,
+.btn:active,
+.btn:focus-visible {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+a.action-new:focus,
+a.action-save:focus {
+    outline: none !important;
+}
+
+a.action-new,
+a.action-save,
+button.action-save,
+.btn-primary {
+    background: #7c2a2d !important;
+    border-color: #7c2a2d !important;
+    color: #fff !important;
+}
+
+a.action-new:hover,
+a.action-save:hover,
+button.action-save:hover,
+.btn-primary:hover {
+    background: #5a1e20 !important;
+    border-color: #5a1e20 !important;
+}
+
+.datagrid td a {
+    color: #7c2a2d !important; 
+    text-decoration: none;
+}
+
+.datagrid td a:hover {
+    color: #5a1e20 !important;
+    text-decoration: underline;
+}
